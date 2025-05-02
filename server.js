@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import User from './models/User.js';
 import Task from './models/Task.js';
 import { sequelize, testConnection } from './config/db.js';
+import userRouter from './routes/userRouter.js';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
 });
 
 // app.use('/api/task', taskRouter)
-// app.use('/api/user', userRouter)
+app.use('/api/user', userRouter)
 
 const startApp = async () => {
   await testConnection(); 
