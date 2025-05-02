@@ -5,6 +5,7 @@ import User from './models/User.js';
 import Task from './models/Task.js';
 import { sequelize, testConnection } from './config/db.js';
 import userRouter from './routes/userRouter.js';
+import taskRouter from './routes/taskRouter.js';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
   res.send('Hello world !');
 });
 
-// app.use('/api/task', taskRouter)
+app.use('/api/task', taskRouter)
 app.use('/api/user', userRouter)
 
 const startApp = async () => {
