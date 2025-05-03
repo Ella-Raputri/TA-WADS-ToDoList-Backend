@@ -128,7 +128,7 @@ export const updateCurrentUser = async (req, res) => {
   
         user.name = name ?? user.name;
         user.bio = bio ?? user.bio;
-        user.propic = propic ?? user.propic;
+        user.propic = propic ;
 
         await user.save();
 

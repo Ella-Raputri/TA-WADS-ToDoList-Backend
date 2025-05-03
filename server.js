@@ -9,6 +9,7 @@ import taskRouter from './routes/taskRouter.js';
 import session from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
 import cookieParser from 'cookie-parser';
+import { swaggerSpec, swaggerUi } from './config/swagger.js';
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use(session({
 
 sessionStore.sync();
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/', (req, res) => {
   res.send('Hello world !');
 });
