@@ -92,7 +92,7 @@ export const logout = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     try { 
-        const { userId } = req.body;  
+        const userId = req.userId;  
         const user = await User.findByPk(userId);
     
         if (!user || user.isDeleted) {
@@ -117,7 +117,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateCurrentUser = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const userId = req.userId;
         const { name, bio, propic } = req.body;
   
         const user = await User.findByPk(userId);

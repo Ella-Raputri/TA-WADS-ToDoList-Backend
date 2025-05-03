@@ -8,6 +8,7 @@ import userRouter from './routes/userRouter.js';
 import taskRouter from './routes/taskRouter.js';
 import session from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-
+app.use(cookieParser());
 
 const SequelizeStoreInstance = SequelizeStore(session.Store);
 const sessionStore = new SequelizeStoreInstance({
