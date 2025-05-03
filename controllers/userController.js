@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-// import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 function isValidEmail(email) {
@@ -41,13 +40,7 @@ export const register = async (req, res) => {
             isDeleted: false
         });
 
-        // const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
-        // res.cookie('token', token,{
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: process.env.NODE_ENV === 'production'? 'none':'strict',
-        //     maxAge: 7 *24 *60 *60 *1000
-        // });
+        req.session.userId = user.id;
 
         return res.status(200).json({ success: true, message: "Account created successfully", user });
 
@@ -74,43 +67,48 @@ export const login = async(req,res)=>{
             return res.status(401).json({success:false, message:"Invalid credentials"})
         }
 
-        // const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
-        // res.cookie('token', token,{
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: process.env.NODE_ENV === 'production'? 'none':'strict',
-        //     maxAge: 7 *24 *60 *60 *1000
-        // });
-
+        req.session.userId = user.id;
         return res.status(200).json({success:true, message:"Logged in successfully", userData:user});
-
-
-    } catch (error) {
+    } 
+    catch (error) {
         return res.status(500).json({success:false, message:error.message})
     }
 }
 
+export const logout = async (req, res) => {
+    try{
+        req.session.destroy(err => {
+            if (err){
+                return res.status(500).json({ success: false, message: 'Logout failed' });
+            } 
+            res.clearCookie('connect.sid'); 
+            return res.status(200).json({ success: true, message: 'Logged out successfully!' });
+        });
+    }
+    catch (err){
+        return res.status(500).json({ success: false, message: error.message });
+    }    
+};
+
 export const getCurrentUser = async (req, res) => {
-    try {
-    //   const userId = req.user.id; 
-    const { userId } = req.query;
-  
-      const user = await User.findByPk(userId);
-  
-      if (!user || user.isDeleted) {
-        return res.status(404).json({ success: false, message: "User not found" });
-      }
-  
-      return res.status(200).json({
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          bio: user.bio,
-          propic: user.propic
+    try { 
+        const { userId } = req.body;  
+        const user = await User.findByPk(userId);
+    
+        if (!user || user.isDeleted) {
+            return res.status(404).json({ success: false, message: "User not found" });
         }
-      });
+    
+        return res.status(200).json({
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                bio: user.bio,
+                propic: user.propic
+            }
+        });
   
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
@@ -119,8 +117,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateCurrentUser = async (req, res) => {
     try {
-    //   const userId = req.user.id; 
-        const { userId } = req.query;
+        const { userId } = req.body;
         const { name, bio, propic } = req.body;
   
         const user = await User.findByPk(userId);
@@ -152,18 +149,3 @@ export const updateCurrentUser = async (req, res) => {
     }
 };
  
-// export const logout = async (req, res) => {
-//     try {
-//         res.cookie('token', '', { 
-//             httpOnly: true, 
-//             secure: process.env.NODE_ENV === 'production',
-//             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-//             expires: new Date(0) // Set expiry to remove the cookie
-//         });
-
-//         return res.json({ success: true, message: "Logged out successfully" });
-
-//     } catch (error) {
-//         return res.status(500).json({ success: false, message: error.message });
-//     }
-// };
